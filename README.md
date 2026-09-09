@@ -196,17 +196,20 @@ vulnerabilities.
 
 ## ⚠️ Known issues
 
-Verified by running `php -l` over every file in both archives:
+Both archives lint clean on **PHP 7.4**. On **PHP 8.0+** three files fail to parse, which is
+a fatal error on any page that loads them:
 
-| Archive | File | Issue | Affects |
-| --- | --- | --- | --- |
-| `onetone-pro-patched.zip` | `functions.php:248` | File ends inside an unterminated `/**` comment block | **All PHP versions** — the theme cannot be parsed |
-| `onetone-pro-patched.zip` | `woocommerce/config.php:350` | Unparenthesized nested ternary | PHP **8.0+** |
-| `onetone-patched.zip` | `woocommerce/config.php:334` | Unparenthesized nested ternary | PHP **8.0+** |
+| Archive | File | Issue |
+| --- | --- | --- |
+| `onetone-pro-patched.zip` | `functions.php:248` | File ends inside an unterminated `/**` comment — fatal on PHP 8, so **the Pro theme will not load at all** |
+| `onetone-pro-patched.zip` | `woocommerce/config.php:350` | Unparenthesized nested ternary |
+| `onetone-patched.zip` | `woocommerce/config.php:334` | Unparenthesized nested ternary |
 
-The free theme is otherwise clean on PHP 7.4 and 8.3; the WooCommerce issue only surfaces
-when that file is loaded. Fixes are tracked for the next patch release — contributions
-welcome.
+The two `woocommerce/config.php` faults only bite when that file is loaded, so the free
+theme is usable on PHP 8 unless WooCommerce is active.
+
+**If you are on PHP 8, stay on PHP 7.4 or wait for the next patch release before deploying
+OneTone Pro.** Fixes are welcome — see [Contributing](#-contributing).
 
 ---
 
