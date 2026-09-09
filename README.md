@@ -194,15 +194,32 @@ vulnerabilities.
 
 ---
 
+## ⚠️ Known issues
+
+Verified by running `php -l` over every file in both archives:
+
+| Archive | File | Issue | Affects |
+| --- | --- | --- | --- |
+| `onetone-pro-patched.zip` | `functions.php:248` | File ends inside an unterminated `/**` comment block | **All PHP versions** — the theme cannot be parsed |
+| `onetone-pro-patched.zip` | `woocommerce/config.php:350` | Unparenthesized nested ternary | PHP **8.0+** |
+| `onetone-patched.zip` | `woocommerce/config.php:334` | Unparenthesized nested ternary | PHP **8.0+** |
+
+The free theme is otherwise clean on PHP 7.4 and 8.3; the WooCommerce issue only surfaces
+when that file is loaded. Fixes are tracked for the next patch release — contributions
+welcome.
+
+---
+
 ## 🤝 Contributing
 
 Issues and pull requests are welcome — especially further security hardening, PHP 8 compatibility fixes and WordPress version testing reports.
 
-1. Fork the repository and create a branch.
-2. Make your change against the extracted theme files, then rebuild the affected `.zip`, keeping the `onetone/` or `onetone-pro/` folder at the archive root.
-3. Describe what you changed and which WordPress / PHP versions you tested against.
+Because the themes ship as archives, a code change means extract → edit → lint → repackage. **[CONTRIBUTING.md](CONTRIBUTING.md)** walks through it, including how to rebuild a `.zip` that WordPress will accept.
 
-Found a security issue? Please [open an issue](https://github.com/SurefireStudios/onetone-wordpress-theme/issues) or contact [Surefire Studios](https://www.surefirestudios.io) rather than disclosing it publicly.
+Every push and pull request is syntax-checked by the [PHP Lint workflow](.github/workflows/php-lint.yml) across PHP 7.4 and 8.3.
+
+> [!CAUTION]
+> Found a security vulnerability? **Don't open a public issue** — follow [SECURITY.md](SECURITY.md) to report it privately.
 
 ---
 

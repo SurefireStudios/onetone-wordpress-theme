@@ -1,0 +1,55 @@
+name: PHP Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: php ${{ matrix.php }} · ${{ matrix.theme }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.3']
+        theme: [onetone, onetone-pro]
+        include:
+          - theme: onetone
+            archive: onetone-patched.zip
+          - theme: onetone-pro
+            archive: onetone-pro-patched.zip
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Extract ${{ matrix.archive }}
+        run: unzip -q "${{ matrix.archive }}" -d build
+
+      - name: Syntax-check every PHP file
+        run: |
+          status=0
+          count=0
+          while IFS= read -r file; do
+            count=$((count + 1))
+            if ! output=$(php -l "$file" 2>&1); then
+              status=1
+              echo "::error file=${file}::${output//$'\n'/ }"
+              printf '%s\n' "$output"
+            fi
+          done < <(find build -name '*.php' -type f | sort)
+          echo "Checked $count PHP file(s) in ${{ matrix.theme }} on PHP ${{ matrix.php }}."
+          exit $status
