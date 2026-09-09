@@ -4,9 +4,10 @@
 
 **A responsive, one-page business theme for WordPress — repackaged by [Surefire Studios](https://www.surefirestudios.io) with security fixes for the abandoned upstream release.**
 
+[![PHP Lint](https://github.com/SurefireStudios/onetone-wordpress-theme/actions/workflows/php-lint.yml/badge.svg)](https://github.com/SurefireStudios/onetone-wordpress-theme/actions/workflows/php-lint.yml)
 [![License: GPL v3](https://img.shields.io/github/license/SurefireStudios/onetone-wordpress-theme?color=blue)](LICENSE)
-[![OneTone 4.0.0](https://img.shields.io/badge/OneTone-4.0.0-0d9488)](#-whats-in-this-repository)
-[![OneTone Pro 3.0.0](https://img.shields.io/badge/OneTone%20Pro-3.0.0-6366f1)](#-whats-in-this-repository)
+[![OneTone 4.0.1](https://img.shields.io/badge/OneTone-4.0.1-0d9488)](#-whats-in-this-repository)
+[![OneTone Pro 3.0.1](https://img.shields.io/badge/OneTone%20Pro-3.0.1-6366f1)](#-whats-in-this-repository)
 [![WordPress 4.0+](https://img.shields.io/badge/WordPress-4.0%2B-21759b?logo=wordpress&logoColor=white)](https://wordpress.org)
 [![Stars](https://img.shields.io/github/stars/SurefireStudios/onetone-wordpress-theme?style=flat)](https://github.com/SurefireStudios/onetone-wordpress-theme/stargazers)
 
@@ -32,13 +33,13 @@ This repository hosts **drop-in replacement builds** that patch known cross-site
 
 | File | Theme folder | Version | Best for |
 | --- | --- | --- | --- |
-| [`onetone-patched.zip`](onetone-patched.zip) | `onetone` | **4.0.0** | Sites on the free OneTone theme. Customizer-driven, WooCommerce-ready. |
-| [`onetone-pro-patched.zip`](onetone-pro-patched.zip) | `onetone-pro` | **3.0.0** | Sites already running OneTone Pro. Adds a dedicated admin options panel and a portfolio. |
+| [`onetone-patched.zip`](onetone-patched.zip) | `onetone` | **4.0.1** | Sites on the free OneTone theme. Customizer-driven, WooCommerce-ready. |
+| [`onetone-pro-patched.zip`](onetone-pro-patched.zip) | `onetone-pro` | **3.0.1** | Sites already running OneTone Pro. Adds a dedicated admin options panel and a portfolio. |
 
 Both archives are complete, ready-to-install WordPress themes — unzip straight into `wp-content/themes/`, or upload the `.zip` through the WordPress admin.
 
 > [!WARNING]
-> `onetone-pro-patched.zip` was captured from a live client build and carries a few site-specific extras (custom `Team Member` and `Practice Area` post types, plus leftover working files). Review it before deploying to an unrelated site.
+> `onetone-pro-patched.zip` originates from a live client build and still registers two site-specific post types (`Team Member` and `Practice Area`). Harmless if unused, but review before deploying to an unrelated site. Stray working files from that build were removed in `3.0.1`.
 
 ---
 
@@ -46,8 +47,8 @@ Both archives are complete, ready-to-install WordPress themes — unzip straight
 
 <table>
   <tr>
-    <td align="center"><strong>OneTone 4.0.0</strong></td>
-    <td align="center"><strong>OneTone Pro 3.0.0</strong></td>
+    <td align="center"><strong>OneTone 4.0.1</strong></td>
+    <td align="center"><strong>OneTone Pro 3.0.1</strong></td>
   </tr>
   <tr>
     <td><img src="docs/onetone-screenshot.jpg" alt="OneTone theme screenshot" width="100%"></td>
@@ -117,7 +118,7 @@ Plus a full-width **slider** section and **YouTube / Vimeo / HTML5 video backgro
 ### Requirements
 
 - WordPress **4.0 or newer** (tested up to 5.8)
-- PHP as required by your WordPress version
+- PHP **7.4 – 8.3** (both archives are syntax-checked against 7.4 and 8.3 on every push)
 - *Optional:* [WooCommerce](https://wordpress.org/plugins/woocommerce/) for shop pages
 
 ### Option A — WordPress admin (recommended)
@@ -161,6 +162,18 @@ Add `--force` to overwrite an older OneTone install in place.
 
 ## 📝 Changelog
 
+### OneTone `4.0.1` · OneTone Pro `3.0.1` — 2026
+
+**PHP 8 compatibility**
+
+- Fixed a fatal parse error in `onetone-pro/functions.php`, where the file ended inside an unterminated `/**` comment block. On PHP 8 this stopped **OneTone Pro from loading at all**.
+- Fixed an unparenthesized nested ternary in `woocommerce/config.php` in both themes — fatal on PHP 8.0+ whenever WooCommerce loaded that file.
+
+**Housekeeping**
+
+- Removed files left behind by a site build in the Pro archive: `error_log` (two copies), `functions.php0`, `style.css.1`, `merged-style.css` and `optimisationio-merged-script.js`. These were unreferenced by the theme and leaked the originating server path — about 1.9 MB in total.
+- Added a CI workflow that syntax-checks every PHP file in both archives on PHP 7.4 and 8.3.
+
 ### OneTone `4.0.0` · OneTone Pro `3.0.0` — 2025
 
 **Security**
@@ -194,19 +207,14 @@ vulnerabilities.
 
 ---
 
-## ⚠️ Known issues
+## ⚠️ Known limitations
 
-Verified by running `php -l` over every file in both archives:
+- **`Tested up to: 5.8`.** Neither theme has been verified against a current WordPress release. Testing reports are welcome.
+- **Dated dependencies.** Bootstrap 3 and Font Awesome 4 are both end-of-life upstream. They still work, but no longer receive fixes.
+- **The Pro archive** carries two post types from the client site it was built for — see the note under [What's in this repository](#-whats-in-this-repository).
 
-| Archive | File | Issue | Affects |
-| --- | --- | --- | --- |
-| `onetone-pro-patched.zip` | `functions.php:248` | File ends inside an unterminated `/**` comment block | **All PHP versions** — the theme cannot be parsed |
-| `onetone-pro-patched.zip` | `woocommerce/config.php:350` | Unparenthesized nested ternary | PHP **8.0+** |
-| `onetone-patched.zip` | `woocommerce/config.php:334` | Unparenthesized nested ternary | PHP **8.0+** |
-
-The free theme is otherwise clean on PHP 7.4 and 8.3; the WooCommerce issue only surfaces
-when that file is loaded. Fixes are tracked for the next patch release — contributions
-welcome.
+CI verifies that every PHP file parses on 7.4 and 8.3; it does not exercise the themes at
+runtime. Please test on a staging site before deploying.
 
 ---
 
